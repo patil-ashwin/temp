@@ -87,3 +87,37 @@ public class StringExtractor {
 }
 
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+import org.springframework.security.crypto.keygen.KeyGenerators;
+import org.jasypt.encryption.StringEncryptor;
+import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.salt.StringFixedSaltGenerator;
+
+@Configuration
+public class JasyptConfiguration {
+
+    @Bean("jasyptStringEncryptor")
+    public StringEncryptor stringEncryptor(Environment environment) {
+        String password = "your-encryption-password"; // Set your desired encryption password here
+
+        PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
+        encryptor.setProviderName("SunJCE");
+        encryptor.setAlgorithm("PBEWithHMACSHA512AndAES_256");
+        encryptor.setPasswordCharArray(password.toCharArray());
+        encryptor.setPoolSize(4);
+
+        return encryptor;
+    }
+
+    @Bean
+    @Primary
+    public TextEncryptor textEncryptor(StringEncryptor stringEncryptor) {
+        return Encryptors.text(stringEncryptor, KeyGenerators.string().generateKey());
+    }
+}
