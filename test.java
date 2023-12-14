@@ -33,3 +33,33 @@ public class EncryptionService {
         return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
 }
+
+
+
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import java.util.Properties;
+
+public class CustomPropertyConfigurer extends PropertyPlaceholderConfigurer {
+
+    @Override
+    protected void convertProperties(Properties props) {
+        super.convertProperties(props);
+
+        // Iterate through properties and modify specific ones as needed
+        for (String propertyName : props.stringPropertyNames()) {
+            String propertyValue = props.getProperty(propertyName);
+            if (propertyName.startsWith("xyz")) {
+                // Modify property value as needed
+                props.setProperty(propertyName, "text2");
+            }
+            // Add other conditions or modifications for different properties here
+        }
+    }
+
+    @Override
+    protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) {
+        super.processProperties(beanFactoryToProcess, props);
+    }
+}
+
