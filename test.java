@@ -63,3 +63,27 @@ public class CustomPropertyConfigurer extends PropertyPlaceholderConfigurer {
     }
 }
 
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class StringExtractor {
+
+    public static void main(String[] args) {
+        String inputString = "NE(mytext)";
+
+        // Define the pattern to match text inside parentheses
+        Pattern pattern = Pattern.compile("NE\\((.*?)\\)");
+        Matcher matcher = pattern.matcher(inputString);
+
+        // Check if the pattern is found in the input string
+        if (matcher.find()) {
+            String extractedText = matcher.group(1); // Extract the text captured by the group
+            System.out.println("Extracted Text: " + extractedText);
+        } else {
+            System.out.println("Pattern not found.");
+        }
+    }
+}
+
+
