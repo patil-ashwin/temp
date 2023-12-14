@@ -1,40 +1,30 @@
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-public class EncryptionDecryptionExample {
+public class EncryptionService {
 
-    private static final String secretKeyString = "MySecretKey12345"; // Hardcoded secret key
+    private final String secretKey = "YourSecretKey"; // Replace with your own secret key
 
-    public static void main(String[] args) throws Exception {
-        // Perform encryption and decryption
-        String encryptedText = encrypt("This is a secret message.");
-        System.out.println("Encrypted Text: " + encryptedText);
-
-        String decryptedText = decrypt(encryptedText);
-        System.out.println("Decrypted Text: " + decryptedText);
-    }
-
-    // Method to encrypt plaintext using the hardcoded SecretKey
-    private static String encrypt(String plainText) throws Exception {
-        byte[] keyBytes = secretKeyString.getBytes();
+    public String encrypt(String plainText) throws Exception {
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
 
-        Cipher cipher = Cipher.getInstance("AES");
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
-        byte[] encryptedBytes = cipher.doFinal(plainText.getBytes());
+        byte[] encryptedBytes = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    // Method to decrypt encrypted text using the hardcoded SecretKey
-    private static String decrypt(String encryptedText) throws Exception {
-        byte[] keyBytes = secretKeyString.getBytes();
+    public String decrypt(String encryptedText) throws Exception {
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
 
-        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
-        Cipher cipher = Cipher.getInstance("AES");
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
         byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-        return new String(decryptedBytes);
+        return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
 }
